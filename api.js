@@ -23,7 +23,7 @@ const asyncHandler = fn => (req, res, next) =>
 
 const startPuppeteerSession = async () => {
     const browser = await puppeteer.launch({
-        headless: false,
+        //headless: false,
     	slowMo: 100,
     	defaultViewport: {
 			width: 1280, //800
