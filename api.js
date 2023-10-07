@@ -131,18 +131,27 @@ express()
 		}
 		
 		let returndata = null
-		console.log("se activa la pagina 1")
+		//console.log("se activa la pagina 1")
 		const page = await sessions[_token_].page
 		returndata = await validateUsername(page, username);
       
 		if(returndata.isexist){
-			if(returndata.isfollow) res.send({'response': 'username_follows'})
-			else res.send({'response': 'username_not_follow'})
-		}else 
-			res.send({'response': 'username_not_exist'})
-		}catch(e){
-			console.log(e)
+			if(returndata.isfollow){
+        		console.log(` username ${username} code: username_follows`)
+        		res.send({'response': 'username_follows'})
+      		}
+      		else {
+				console.log(` username ${username} code: username_not_follow`)
+				res.send({'response': 'username_not_follow'})
+			}
 		}
+		else{
+			console.log(` username ${username} code: username_not_exist`)
+			res.send({'response': 'username_not_exist'})
+		}
+	}catch(e){
+		console.log(e)
+	}
     
   }))
   .use((err, req, res, next) => res.sendStatus(500))
@@ -151,7 +160,7 @@ express()
 
 async function validateUsername(page, username){
 	//await page.screenshot({path: '2-continue.png'});
-	console.log("el username es "+username)
+	//console.log("el username es "+username)
 	const inpclick = 'input[data-testid="SearchBox_Search_Input"]';
 	await page.waitForSelector(inpclick);
 	await page.click(inpclick);
@@ -168,7 +177,7 @@ async function validateUsername(page, username){
 	console.log(`typeheaduser ${typeheaduser}`)
 
 	var reg = new RegExp(`@${username}`, 'g'), reg2 = new RegExp(`(Follows you|Te sigue)`, 'g');
-	console.log("el patron es "+reg)
+	//console.log("el patron es "+reg)
 	var busq = typeheaduser.matchAll(reg);
 	
 	if (reg.test(typeheaduser)){
