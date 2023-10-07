@@ -25,14 +25,14 @@ const asyncHandler = fn => (req, res, next) =>
 
 const startPuppeteerSession = async () => {
     const browser = await puppeteer.launch({
-      //headless: false,
+      headless: false,
       args: ['--no-sandbox'],
     	slowMo: 100,
     	defaultViewport: {
 			width: 1280, //800
 			height: 720 //600
     	},
-        //executablePath: "D:\\Trabajo\\Desarrollo Web\\Node Js\\instaladores\\chrome-win\\chrome.exe",
+        executablePath: "D:\\Trabajo\\Desarrollo Web\\Node Js\\instaladores\\chrome-win\\chrome.exe",
     });
     
     const page = await browser.newPage();
@@ -90,9 +90,16 @@ const startPuppeteerSession = async () => {
         await password?.type(_password_);
         await console.log(_password_)
 
-        var singIn  = 'div[data-testid="LoginForm_Login_Button"]'
-        await page.waitForSelector(singIn);
-        await page.click(singIn);
+        const [buttonLogin] = await page.$x("//span[contains(., 'Next')]");
+        if (buttonLogin) {
+            await buttonLogin.click();
+            await console.log("funciona el metodo xpath")
+        }else{
+          var singIn  = 'div[data-testid="LoginForm_Login_Button"]'
+          await page.waitForSelector(singIn);
+          await page.click(singIn);
+        }
+        
         
     }
 	
