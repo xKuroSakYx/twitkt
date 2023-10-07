@@ -1,13 +1,15 @@
 import puppeteer from "puppeteer";
 import express from 'express'
 import fs from 'fs';
+import dotenv from 'dotenv'
+dotenv.config()
 
-const _username_ = 'x6nge' //c5724130
-const _useremail_ = 'thekeyoftrue@x6nge.io';
-const _telefono_ = '+5358538095';
-const _password_ = 'KuendaCongo7.';
-const _token_ = 'tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s'
-const PORT = process.env.PORT || 5001
+const _username_ = process.env.TWI_USERNAME //c5724130
+const _useremail_ = process.env.TWI_USEREMAIL;
+const _telefono_ = process.env.TWI_TELEFONO;
+const _password_ = process.env.TWI_PASSWORD;
+const _token_ = process.env.TWI_TOKEN
+const PORT = process.env.TWI_PORT || 5001
 
 let _cookies_;
 try{
@@ -46,6 +48,7 @@ const startPuppeteerSession = async () => {
     else if(url == 'https://twitter.com/i/flow/login?redirect_after_login=%2Fx6nge%2Ffollowers'){
         await console.log('la url es '+url)
         const user = await page.$('input[autocomplete="username"]');
+		
         await user?.type(_useremail_);
         await console.log(_useremail_)
 
@@ -131,7 +134,6 @@ express()
 		}
 		
 		let returndata = null
-		//console.log("se activa la pagina 1")
 		const page = await sessions[_token_].page
 		returndata = await validateUsername(page, username);
       
@@ -160,7 +162,6 @@ express()
 
 async function validateUsername(page, username){
 	//await page.screenshot({path: '2-continue.png'});
-	//console.log("el username es "+username)
 	const inpclick = 'input[data-testid="SearchBox_Search_Input"]';
 	await page.waitForSelector(inpclick);
 	await page.click(inpclick);
