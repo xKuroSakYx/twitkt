@@ -9,7 +9,7 @@ const _useremail_ = process.env.TWI_USEREMAIL;
 const _telefono_ = process.env.TWI_TELEFONO;
 const _password_ = process.env.TWI_PASSWORD;
 const _token_ = process.env.TWI_TOKEN
-const PORT = process.env.TWI_PORT || 5001
+const PORT = 5001
 
 let _cookies_;
 try{
