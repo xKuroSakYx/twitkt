@@ -137,19 +137,19 @@ express()
       
 		const username = req.query.username || '';
 		if(username == ''){
-			res.send({'response': 'user_not_found'})
+		res.send({'response': 'user_not_found'})
 		}
-		
+			
 		let returndata = null
 		const page = await sessions[_token_].page
 		returndata = await validateUsername(res, page, username);
-      
+	
 		if(returndata.isexist){
 			if(returndata.isfollow){
-        		console.log(` username ${username} code: username_follows`)
-        		res.send({'response': 'username_follows'})
-      		}
-      		else {
+				console.log(` username ${username} code: username_follows`)
+				res.send({'response': 'username_follows'})
+			}
+			else {
 				console.log(` username ${username} code: username_not_follow`)
 				res.send({'response': 'username_not_follow'})
 			}
@@ -159,7 +159,8 @@ express()
 			res.send({'response': 'username_not_exist'})
 		}
 	}catch(e){
-		console.log(e)
+		await console.log(e)
+		await res.send({'response': 'error_in_validuser'})
 	}
     
   }))
