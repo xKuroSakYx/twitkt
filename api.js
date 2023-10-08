@@ -142,7 +142,7 @@ express()
 		
 		let returndata = null
 		const page = await sessions[_token_].page
-		returndata = await validateUsername(page, username);
+		returndata = await validateUsername(res, page, username);
       
 		if(returndata.isexist){
 			if(returndata.isfollow){
@@ -167,34 +167,40 @@ express()
   .listen(PORT, () => console.log("listening on port "+PORT))
 ;
 
-async function validateUsername(page, username){
+async function validateUsername(res, page, username){
 	//await page.screenshot({path: '2-continue.png'});
-	const inpclick = 'input[data-testid="SearchBox_Search_Input"]';
-	await page.waitForSelector(inpclick);
-	await page.click(inpclick);
+	try{
+		const inpclick = 'input[data-testid="SearchBox_Search_Input"]';
+		await page.waitForSelector(inpclick);
+		await page.click(inpclick);
 
-	const input = await page.$('input[data-testid="SearchBox_Search_Input"]');
-	await input.click({ clickCount: 3 })
-	await input?.type(`@${username}`);
+		const input = await page.$('input[data-testid="SearchBox_Search_Input"]');
+		await input.click({ clickCount: 3 })
+		await input?.type(`@${username}`);
 
-	var isexist = false, isfollow = false;
-	var _username = 'div[data-testid="TypeaheadUser"]'
-	await page.waitForSelector(_username)
-	let element1 = await page.$(_username)
-	let typeheaduser = await page.evaluate(el => el.textContent, element1)
-	console.log(`typeheaduser ${typeheaduser}`)
+		var isexist = false, isfollow = false;
+		var _username = 'div[data-testid="TypeaheadUser"]'
+		await page.waitForSelector(_username)
+		let element1 = await page.$(_username)
+		let typeheaduser = await page.evaluate(el => el.textContent, element1)
+		console.log(`typeheaduser ${typeheaduser}`)
 
-	var reg = new RegExp(`@${username}`, 'g'), reg2 = new RegExp(`(Follows you|Te sigue)`, 'g');
-	//console.log("el patron es "+reg)
-	var busq = typeheaduser.matchAll(reg);
-	
-	if (reg.test(typeheaduser)){
-		if(reg2.test(typeheaduser)){
-			isfollow = true
+		var reg = new RegExp(`@${username}`, 'g'), reg2 = new RegExp(`(Follows you|Te sigue)`, 'g');
+		//console.log("el patron es "+reg)
+		var busq = typeheaduser.matchAll(reg);
+		
+		if (reg.test(typeheaduser)){
+			if(reg2.test(typeheaduser)){
+				isfollow = true
+			}
+			isexist = true
 		}
-		isexist = true
+		return {isexist, isfollow}
+	}catch(e){
+		await console.log(e)
+		res.send({'response': 'error_in_validuser'})
 	}
-	return {isexist, isfollow}
+	
 }
 function saveCookies(data){ 
     let cookies = []
