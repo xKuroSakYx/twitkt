@@ -76,7 +76,7 @@ const startPuppeteerSession = async () => {
 					await page.waitForSelector(btnNameUser);
 					await page.click(btnNameUser);
 				}catch(e){
-					//await page.screenshot({path: '2-continue.png'});
+					await page.screenshot({path: '2-continue.png'});
 				}
 				
             }else{
@@ -160,6 +160,7 @@ express()
 		}
 	}catch(e){
 		await console.log(e)
+    await page.screenshot({path: 'route-auth.png'});
 		await res.send({'response': 'error_in_validuser'})
 	}
     
@@ -199,6 +200,7 @@ async function validateUsername(res, page, username){
 		return {isexist, isfollow}
 	}catch(e){
 		await console.log(e)
+    await page.screenshot({path: 'validateUsername.png'});
 		res.send({'response': 'error_in_validuser'})
 	}
 	
