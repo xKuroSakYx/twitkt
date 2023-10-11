@@ -185,6 +185,7 @@ async function validateUsername(res, page, username){
 		await page.waitForSelector(_username)
 		let element1 = await page.$(_username)
 		let typeheaduser = await page.evaluate(el => el.textContent, element1)
+    
 		console.log(`typeheaduser ${typeheaduser}`)
 
 		var reg = new RegExp(`@${username}`, 'g'),
@@ -194,6 +195,7 @@ async function validateUsername(res, page, username){
 		var busq = typeheaduser.matchAll(reg);
 		
 		if (reg.test(typeheaduser)){
+      typeheaduser = typeheaduser.replace(username, " ")
 			if(reg2.test(typeheaduser)){
 				isfollow = true
 			}else if(reg3.test(typeheaduser)){
