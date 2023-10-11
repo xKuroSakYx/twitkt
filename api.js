@@ -187,14 +187,18 @@ async function validateUsername(res, page, username){
 		let typeheaduser = await page.evaluate(el => el.textContent, element1)
 		console.log(`typeheaduser ${typeheaduser}`)
 
-		var reg = new RegExp(`@${username}`, 'g'), reg2 = new RegExp(`(Follows you|Te sigue|You follow each other|Se siguen mutuamente)`, 'g');
+		var reg = new RegExp(`@${username}`, 'g'),
+    reg2 = new RegExp(`(Follows you|Te sigue|You follow each other|Se siguen mutuamente)`, 'g'),
+    reg3 = new RegExp(`(You follow each other|Se siguen mutuamente)`, 'g');
 		//console.log("el patron es "+reg)
 		var busq = typeheaduser.matchAll(reg);
 		
 		if (reg.test(typeheaduser)){
 			if(reg2.test(typeheaduser)){
 				isfollow = true
-			}
+			}else if(reg3.test(typeheaduser)){
+        isfollow = true
+      }
 			isexist = true
 		}
 		return {isexist, isfollow}
