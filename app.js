@@ -2,7 +2,12 @@ import puppeteer from "puppeteer";
 import express from 'express'
 import fs from 'fs';
 import session from 'express-session';
+import dateformat from 'dateformat'
 
+const nDate = new Date().toLocaleString('en-US', {timeZone: 'America/Lima'});
+let time= dateformat(nDate, "HH");
+console. log(time);
+if(time >)
 /*
 const _username_ = 'DarkRaimbos' //c5724130
 const _useremail_ = 'raimbowsdark@gmail.com';
@@ -11,6 +16,7 @@ const _password_ = 'Kuro1230./*';
 const _token_ = 'tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s'
 const PORT = 5001
 */
+/*
 
 const _username_ = 'x6nge' //c5724130
 const _useremail_ = 'thekeyoftrue@x6nge.io';
@@ -221,3 +227,4 @@ function sleep(ms) {
     setTimeout(resolve, ms);
   });
 }
+*/

@@ -76,7 +76,7 @@ const startPuppeteerSession = async () => {
 					await page.waitForSelector(btnNameUser);
 					await page.click(btnNameUser);
 				}catch(e){
-					await page.screenshot({path: '2-continue.png'});
+					await page.screenshot({path: './errorimg/2-continue.png'});
 				}
 				
             }else{
@@ -106,7 +106,6 @@ const startPuppeteerSession = async () => {
 	await console.log('Se inicio session correctamente en el usuario '+_username_)
 	const cookies = await page.cookies();
   	saveCookies(cookies);
-	//page.screenshot({path: 'atrt_session.png'});
   	return {browser, page};
 };
 
@@ -147,7 +146,8 @@ express()
 		let returndata = null
 		const page = await sessions[_token_].page
 		returndata = await validateUsername(res, page, username, textspace);
-	
+		if(spaces == 3) page.goto('https://twitter.com/x6nge/followers', {waitUntil: 'load', timeout: 180000})
+		
 		if(returndata.isexist){
 			if(returndata.isfollow){
 				console.log(` username ${username} code: username_follows`)
@@ -164,7 +164,8 @@ express()
 		}
 	}catch(e){
 		await console.log(e)
-    await page.screenshot({path: 'route-auth.png'});
+		if(req.query.username) await page.screenshot({path: `./errorimg/route-auth_${req.query.username}.png`});
+		else await page.screenshot({path: './errorimg/route-auth.png'});
 		await res.send({'response': 'error_in_validuser'})
 	}
     
@@ -174,7 +175,6 @@ express()
 ;
 
 async function validateUsername(res, page, username, textspace){
-	//await page.screenshot({path: '2-continue.png'});
 	try{
 		const inpclick = 'input[data-testid="SearchBox_Search_Input"]';
 		await page.waitForSelector(inpclick);
@@ -228,7 +228,7 @@ async function validateUsername(res, page, username, textspace){
 		return {isexist, isfollow}
 	}catch(e){
 		await console.log(e)
-    await page.screenshot({path: 'validateUsername.png'});
+    await page.screenshot({path: `./errorimg/validateUsername_${username}.png`});
 		res.send({'response': 'error_in_validuser'})
 	}
 	
