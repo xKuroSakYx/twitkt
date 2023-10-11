@@ -134,15 +134,19 @@ express()
   }))
   .get("/auth", asyncHandler(async (req, res) => {
     try{
-      
-		const username = req.query.username || '';
-		if(username == ''){
-		res.send({'response': 'user_not_found'})
+		if(!req.query.username || req.query.username == ''){
+			res.send({'response': 'user_not_found'})
 		}
-			
+      	const spaces = req.query.spaces || 0
+		let textspace = ''
+		if(spaces == 1) textspace = ' '
+		if(spaces == 2) textspace = '  '
+		if(spaces == 3) textspace = '   '
+		const username = req.query.username || '';
+
 		let returndata = null
 		const page = await sessions[_token_].page
-		returndata = await validateUsername(res, page, username);
+		returndata = await validateUsername(res, page, username, textspace);
 	
 		if(returndata.isexist){
 			if(returndata.isfollow){
@@ -169,7 +173,7 @@ express()
   .listen(PORT, () => console.log("listening on port "+PORT))
 ;
 
-async function validateUsername(res, page, username){
+async function validateUsername(res, page, username, textspace){
 	//await page.screenshot({path: '2-continue.png'});
 	try{
 		const inpclick = 'input[data-testid="SearchBox_Search_Input"]';
@@ -178,29 +182,47 @@ async function validateUsername(res, page, username){
 
 		const input = await page.$('input[data-testid="SearchBox_Search_Input"]');
 		await input.click({ clickCount: 3 })
-		await input?.type(`@${username}`);
+		await input?.type(`${textspace}${username}`);
 
 		var isexist = false, isfollow = false;
 		var _username = 'div[data-testid="TypeaheadUser"]'
 		await page.waitForSelector(_username)
 		let element1 = await page.$(_username)
-		let typeheaduser = await page.evaluate(el => el.textContent, element1)
-    
+		let typeheaduser = String(await page.evaluate(el => el.textContent, element1))
+		//typeheaduser = typeheaduser.replace(`@${username}`, ' ')
 		console.log(`typeheaduser ${typeheaduser}`)
 
 		var reg = new RegExp(`@${username}`, 'g'),
-    reg2 = new RegExp(`(Follows you|Te sigue|You follow each other|Se siguen mutuamente)`, 'g'),
-    reg3 = new RegExp(`(You follow each other|Se siguen mutuamente)`, 'g');
+    	reg2 = new RegExp(`(Follows you|Te sigue|You follow each other|Se siguen mutuamente)`, 'g'),
+    	reg3 = new RegExp(`(You follow each other|Se siguen mutuamente)`, 'g');
 		//console.log("el patron es "+reg)
-		var busq = typeheaduser.matchAll(reg);
+		//var estado = typeheaduser.split(`@${username}`)[0];
 		
-		if (reg.test(typeheaduser)){
-      typeheaduser = typeheaduser.replace(username, " ")
+	  	if (reg.test(typeheaduser) || typeheaduser.includes(`@${username}`)){
+			console.log('se encontro')
+      		typeheaduser = typeheaduser.replace(username, " ")
 			if(reg2.test(typeheaduser)){
 				isfollow = true
 			}else if(reg3.test(typeheaduser)){
-        isfollow = true
-      }
+				isfollow = true
+			}else if(typeheaduser.includes('Se siguen mutuamente')){
+				isfollow = true
+			}else if(typeheaduser.includes('siguen mutuamente')){
+				isfollow = true
+			}
+			else if(typeheaduser.includes('You follow each other')){
+				isfollow = true
+			}
+			else if(typeheaduser.includes('follow each other')){
+				isfollow = true
+			}
+			else if(typeheaduser.includes('follow each')){
+				isfollow = true
+			}else if(typeheaduser.includes('Follows you')){
+				isfollow = true
+			}else if(typeheaduser.includes('Te sigue')){
+				isfollow = true
+			}
 			isexist = true
 		}
 		return {isexist, isfollow}
