@@ -25,10 +25,10 @@ const asyncHandler = fn => (req, res, next) =>
 
 const startPuppeteerSession = async () => {
     const browser = await puppeteer.launch({
-      headless: true,
-      args: ['--no-sandbox'],
-    	slowMo: 100,
-    	defaultViewport: {
+		//headless: true,
+		args: ['--no-sandbox'],
+		slowMo: 100,
+		defaultViewport: {
 			width: 1280, //800
 			height: 720 //600
     	},
