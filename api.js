@@ -182,7 +182,7 @@ async function validateUsername(res, page, username, textspace){
 
 		const input = await page.$('input[data-testid="SearchBox_Search_Input"]');
 		await input.click({ clickCount: 3 })
-		await input?.type(`${textspace}${username}`);
+		await input?.type(`${textspace}@${username}`);
 
 		var isexist = false, isfollow = false;
 		var _username = 'div[data-testid="TypeaheadUser"]'
