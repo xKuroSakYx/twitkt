@@ -25,14 +25,14 @@ const asyncHandler = fn => (req, res, next) =>
 
 const startPuppeteerSession = async () => {
     const browser = await puppeteer.launch({
-		//headless: true,
+		headless: false,
 		args: ['--no-sandbox'],
 		slowMo: 100,
 		defaultViewport: {
 			width: 1280, //800
 			height: 720 //600
     	},
-        //executablePath: "D:\\Trabajo\\Desarrollo Web\\Node Js\\instaladores\\chrome-win\\chrome.exe",
+        executablePath: "D:\\Trabajo\\Desarrollo Web\\Node Js\\instaladores\\chrome-win\\chrome.exe",
     });
     
     const page = await browser.newPage();
@@ -148,6 +148,8 @@ express()
 		returndata = await validateUsername(res, page, username, textspace);
 		if(spaces == 3) page.goto('https://twitter.com/x6nge/followers', {waitUntil: 'load', timeout: 180000})
 		
+		if(returndata.error) res.send({'response': returndata.error})
+
 		if(returndata.isexist){
 			if(returndata.isfollow){
 				console.log(` username ${username} code: username_follows`)
@@ -225,11 +227,11 @@ async function validateUsername(res, page, username, textspace){
 			}
 			isexist = true
 		}
-		return {isexist, isfollow}
+		return {isexist, isfollow, error: false}
 	}catch(e){
 		await console.log(e)
-    await page.screenshot({path: `./errorimg/validateUsername_${username}.png`});
-		res.send({'response': 'error_in_validuser'})
+    	await page.screenshot({path: `./errorimg/validateUsername_${username}.png`});
+		return {isexist: false, isfollow: false, error: 'error_in_validuser'}
 	}
 	
 }
