@@ -11,6 +11,8 @@ const _password_ = process.env.TWI_PASSWORD;
 const _token_ = process.env.TWI_TOKEN
 const PORT = 5001
 
+//http://localhost:5001/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username=Savvy_Coin
+
 let _cookies_;
 try{
     let readCookie = fs.readFileSync('cookies.txt', 'utf8');
