@@ -11,7 +11,7 @@ const _password_ = process.env.TWI_PASSWORD;
 const _token_ = process.env.TWI_TOKEN
 const PORT = process.env.TWI_PORT
 
-//http://localhost:5001/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username=Savvy_Coin
+//http://localhost:5002/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username=Savvy_Coin
 
 let _cookies_;
 try{
@@ -27,14 +27,14 @@ const asyncHandler = fn => (req, res, next) =>
 
 const startPuppeteerSession = async () => {
     const browser = await puppeteer.launch({
-		//headless: false,
+		headless: false,
 		args: ['--no-sandbox'],
 		slowMo: 100,
 		defaultViewport: {
 			width: 1280, //800
 			height: 720 //600
     	},
-        //executablePath: "D:\\Trabajo\\Desarrollo Web\\Node Js\\instaladores\\chrome-win\\chrome.exe",
+        executablePath: "D:\\Trabajo\\Desarrollo Web\\Node Js\\instaladores\\chrome-win\\chrome.exe",
     });
     
     const page = await browser.newPage();
@@ -140,14 +140,21 @@ express()
 		}
       	const spaces = req.query.spaces || 0
 		let textspace = ''
+		/*
 		if(spaces == 1) textspace = ' '
 		if(spaces == 2) textspace = '  '
 		if(spaces == 3) textspace = '   '
+		*/
+		if(spaces == 1) textspace = '%20'
+		if(spaces == 2) textspace = '%20%20'
+		if(spaces == 3) textspace = '%20%20%20'
+
 		const username = req.query.username || '';
 
 		let returndata = null
 		const page = await sessions[_token_].page
-		returndata = await validateUsername(res, page, username, textspace);
+		//returndata = await validateUsername(res, page, username, textspace);
+		returndata = await validateUsernameFull(page, username, textspace);
 		if(spaces == 3) page.goto('https://twitter.com/x6nge/followers', {waitUntil: 'load', timeout: 180000})
 		
 		if(returndata.error) res.send({'response': returndata.error})
@@ -236,6 +243,57 @@ async function validateUsername(res, page, username, textspace){
 		return {isexist: false, isfollow: false, error: 'error_in_validuser'}
 	}
 	
+}
+async function validateUsernameFull(page, username, textspace){
+	try{
+		await page.goto(`https://twitter.com/search?q=${textspace}%40${username}&src=typed_query&f=user`);
+		var isexist = false, isfollow = false;
+		var _username = 'div[data-testid="UserCell"]'
+		await page.waitForSelector(_username)
+		let element1 = await page.$(_username)
+		let typeheaduser = String(await page.evaluate(el => el.textContent, element1))
+		//typeheaduser = typeheaduser.replace(`@${username}`, ' ')
+		console.log(`typeheaduser ${typeheaduser}`)
+
+		var reg = new RegExp(`@${username}`, 'g'),
+    	reg2 = new RegExp(`(Follows you|Te sigue|You follow each other|Se siguen mutuamente)`, 'g'),
+    	reg3 = new RegExp(`(You follow each other|Se siguen mutuamente)`, 'g');
+		//console.log("el patron es "+reg)
+		//var estado = typeheaduser.split(`@${username}`)[0];
+		
+	  	if (reg.test(typeheaduser) || typeheaduser.includes(`@${username}`)){
+			console.log('se encontro')
+      		typeheaduser = typeheaduser.replace(username, " ")
+			if(reg2.test(typeheaduser)){
+				isfollow = true
+			}else if(reg3.test(typeheaduser)){
+				isfollow = true
+			}else if(typeheaduser.includes('Se siguen mutuamente')){
+				isfollow = true
+			}else if(typeheaduser.includes('siguen mutuamente')){
+				isfollow = true
+			}
+			else if(typeheaduser.includes('You follow each other')){
+				isfollow = true
+			}
+			else if(typeheaduser.includes('follow each other')){
+				isfollow = true
+			}
+			else if(typeheaduser.includes('follow each')){
+				isfollow = true
+			}else if(typeheaduser.includes('Follows you')){
+				isfollow = true
+			}else if(typeheaduser.includes('Te sigue')){
+				isfollow = true
+			}
+			isexist = true
+		}
+		return {isexist, isfollow, error: false}
+	}catch(e){
+		await console.log(e)
+    	await page.screenshot({path: `./errorimg/validateUsername_${username}.png`});
+		return {isexist: false, isfollow: false, error: 'error_in_validuser'}
+	}
 }
 function saveCookies(data){ 
     let cookies = []
