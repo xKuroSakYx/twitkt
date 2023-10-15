@@ -98,7 +98,7 @@ const startPuppeteerSession = async () => {
             await console.log("funciona el metodo xpath")
         }else{
           var singIn  = 'div[data-testid="LoginForm_Login_Button"]'
-          await page.waitForSelector(singIn);
+          await page.waitForSelector(singIn,  {waitUntil: 'load', timeout: 180000});
           await page.click(singIn);
         }
         
@@ -153,8 +153,8 @@ express()
 
 		let returndata = null
 		const page = await sessions[_token_].page
-		//returndata = await validateUsername(res, page, username, textspace);
-		returndata = await validateUsernameFull(page, username, textspace);
+		returndata = await validateUsername(res, page, username, textspace);
+		//returndata = await validateUsernameFull(page, username, textspace);
 		if(spaces == 3) page.goto('https://twitter.com/x6nge/followers', {waitUntil: 'load', timeout: 180000})
 		
 		if(returndata.error) res.send({'response': returndata.error})
@@ -248,10 +248,10 @@ async function validateUsernameFull(page, username, textspace){
 	try{
 		await page.goto(`https://twitter.com/search?q=${textspace}%40${username}&src=typed_query&f=user`);
 		var isexist = false, isfollow = false;
-		var _username = 'div[data-testid="UserCell"]'
+		var _username = `div[aria-label="Timeline: Search timeline"]  div[data-testid="UserCell"]`
 		await page.waitForSelector(_username)
 		let element1 = await page.$(_username)
-		let typeheaduser = String(await page.evaluate(el => el.textContent, element1))
+		let typeheaduser = String(await page.evaluate(el => el[0].textContent, element1))
 		//typeheaduser = typeheaduser.replace(`@${username}`, ' ')
 		console.log(`typeheaduser ${typeheaduser}`)
 
