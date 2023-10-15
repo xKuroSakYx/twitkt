@@ -33,8 +33,8 @@ const startPuppeteerSession = async () => {
 		defaultViewport: {
 			width: 1280, //800
 			height: 720 //600
-    	},
-        //executablePath: "D:\\Trabajo\\Desarrollo Web\\Node Js\\instaladores\\chrome-win\\chrome.exe",
+    	//},
+        executablePath: "D:\\Trabajo\\Desarrollo Web\\Node Js\\instaladores\\chrome-win\\chrome.exe",
     });
     
     const page = await browser.newPage();
