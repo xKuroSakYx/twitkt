@@ -293,13 +293,13 @@ async function validateUsernameFull(page, username, textspace){
 		let elementFin;
 		try{
 			let timeuser = Date.now()
-			await page.waitForSelector(_username, {waitUntil: 'load', timeout: _TIMEOUT_})
+			await page.waitForSelector(_username, {waitUntil: 'load', timeout: 5000})
 			elementFin = [await page.$(_username1)]
 			console.log(`se demora en encontrarlo usuario1 ${(Date.now() - timeuser)/1000}`)
 		}catch(e){
 			try{
 				let timeuser = Date.now()
-				await page.waitForSelector(_username2, {waitUntil: 'load', timeout: _TIMEOUT_})
+				await page.waitForSelector(_username2, {waitUntil: 'load', timeout: 5000})
 				elementFin = await page.$$(_username2)
 				console.log(`se demora en encontrarlo usuario2 ${(Date.now() - timeuser)/1000}`)
 			}catch(e){
