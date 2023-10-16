@@ -49,8 +49,8 @@ const startPuppeteerSession = async () => {
 				args: ['--no-sandbox'],
 				slowMo: 100,
 				defaultViewport: {
-					width: 1280, //800
-					height: 720 //600
+					width: 1366, //800
+					height: 768 //600
 				},
 				executablePath: "D:\\Trabajo\\Desarrollo Web\\Node Js\\instaladores\\chrome-win\\chrome.exe",
 			});
